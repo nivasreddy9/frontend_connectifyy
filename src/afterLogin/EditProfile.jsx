@@ -23,7 +23,7 @@ const EditProfile = () => {
             setError("");
             setSuccess("");
 
-            console.log("Sending update request with data:", {
+            console.log("Sending update request with:", {
                 id: user._id,
                 Name: name,
                 Phone: phone,
