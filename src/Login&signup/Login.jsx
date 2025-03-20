@@ -11,8 +11,8 @@ const Login = () => {
   const navigate = useNavigate();
   const dispatch=useDispatch();
   const [formData, setFormData] = useState({
-    Email: "charanreddy685@gmail.com",
-    Password: "NAna21032002@"
+    Email: "tillu685@gmail.com",
+    Password: "Nana21032002@"
   });
 
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -31,7 +31,7 @@ const Login = () => {
     setError(""); 
   
     try {
-      const response = await axios.post("http://localhost:1999/login", formData, {
+      const response = await axios.post("https://connectify-backend-app.onrender.com/login", formData, {
         headers: { "Content-Type": "application/json" },
         withCredentials: true
       });
@@ -42,7 +42,7 @@ const Login = () => {
   
       if (response.data.message.toLowerCase().includes("login successful")) {
         localStorage.setItem("userData", JSON.stringify(response.data.data));
-        console.log("Navigating to dashboard...");
+        // console.log("Navigating to dashboard...");
   
         navigate("/feed", {
           state: {

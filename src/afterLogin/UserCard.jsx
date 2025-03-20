@@ -1,83 +1,115 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { removeUserFromFeed } from "../utils/feedSlice";
+import axios from "axios";
 
 const UserCard = ({ user }) => {
-  const { Name, Email, Phone, photoUrl, Age, Gender, About } = user;
+  const { _id, Name, Email, Phone, photoUrl, Age, Gender, About } = user;
   const [isHovered, setIsHovered] = useState(false);
+  const [requestStatus, setRequestStatus] = useState({
+    loading: false,
+    error: null,
+  });
+  const dispatch = useDispatch();
+
+  const handleSendRequest = async (status, userId) => {
+    setRequestStatus({ loading: true, error: null });
+
+    try {
+      const requestUrl = `https://connectify-backend-app.onrender.com/request/send/${status}/${userId}`;
+      console.log("Sending request to:", requestUrl);
+
+      const res = await axios.post(requestUrl, {}, { withCredentials: true });
+
+      console.log("Response:", res.data);
+
+      dispatch(removeUserFromFeed(userId));
+      setRequestStatus({ loading: false, error: null });
+    } catch (err) {
+      console.error("Error details:", err);
+      setRequestStatus({
+        loading: false,
+        error: err.response?.data?.message || "Request failed",
+      });
+    }
+  };
+
+  if (!_id || !Name) {
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-gray-900">
+        <div className="bg-gray-800 text-white p-8 rounded-lg shadow-lg">
+          <p className="text-xl">No profile available</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-blue-100 via-pink-100 to-purple-100 relative overflow-hidden">
-      
-      {/* Subtle Background Pattern */}
-      <div
-        className="absolute inset-0 opacity-30"
-        style={{
-          backgroundImage:
-            'radial-gradient(circle, rgba(255, 255, 255, 0.5) 1px, transparent 1px), radial-gradient(circle, rgba(255, 255, 255, 0.3) 1px, transparent 1px)',
-          backgroundSize: '40px 40px',
-          backgroundPosition: '0 0, 20px 20px',
-        }}
-      />
-
-      {/* Soft Pastel Glow */}
-      <div className="absolute w-72 h-72 bg-blue-300 rounded-full blur-3xl opacity-40 top-20 left-20 animate-pulse"></div>
-      <div className="absolute w-72 h-72 bg-pink-300 rounded-full blur-3xl opacity-40 bottom-20 right-20 animate-pulse"></div>
-
-      {/* User Card */}
-      <div
-        className={`relative z-10 card w-96 bg-white shadow-lg rounded-lg overflow-hidden border border-gray-200 transition-all duration-500 
-          ${isHovered ? 'scale-105 shadow-xl border-gray-300' : 'scale-100'}
-        `}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-      >
-        {/* Profile Picture */}
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
+      <div className="relative w-96 bg-gray-800 text-white shadow-xl rounded-lg border border-gray-700 overflow-hidden transform transition duration-300 hover:scale-105">
         <figure className="relative h-60 overflow-hidden">
           <img
             src={photoUrl}
             alt={Name}
             className="w-full h-full object-cover transition-transform duration-500"
-            style={{ transform: isHovered ? 'scale(1.05)' : 'scale(1)' }}
+            style={{ transform: isHovered ? "scale(1.05)" : "scale(1)" }}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-gray-800/50 via-gray-500/20 to-transparent"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent"></div>
           <div className="absolute bottom-0 left-0 p-4 w-full">
-            <h2 className="text-2xl font-bold text-white">{Name}</h2>
+            <h2 className="text-2xl font-bold">{Name}</h2>
             {Age && Gender && (
-              <p className="text-sm text-gray-200 mt-1 flex items-center">
-                <span className="inline-block mr-2 bg-blue-400 rounded-full px-2 py-1 text-white text-xs font-medium">
+              <p className="text-sm flex items-center space-x-2">
+                <span className="bg-blue-500 text-xs font-medium px-2 py-1 rounded">
                   {Age}
                 </span>
-                <span className="text-gray-200">{Gender}</span>
+                <span>{Gender}</span>
               </p>
             )}
           </div>
         </figure>
 
-        {/* Card Body */}
-        <div className="card-body p-6 text-gray-800">
-          {/* About Section */}
+        <div className="p-6">
+          {requestStatus.error && (
+            <div className="mb-4 p-3 bg-red-500 text-white rounded-md">
+              <p>{requestStatus.error}</p>
+            </div>
+          )}
+
           {About && (
-            <div className="mb-4 p-4 bg-gray-100 rounded-lg border-l-4 border-blue-400">
+            <div className="mb-4 p-4 bg-gray-700 rounded-lg border-l-4 border-blue-500">
               <p>{About}</p>
             </div>
           )}
 
-          {/* Contact Info */}
           <div className="space-y-3 mb-4">
-            <p className="flex items-center text-sm text-gray-600 hover:text-blue-500 transition-colors duration-200">
+            <p className="flex items-center text-gray-400">
               📧 {Email}
             </p>
-            <p className="flex items-center text-sm text-gray-600 hover:text-green-500 transition-colors duration-200">
+            <p className="flex items-center text-gray-400">
               📞 {Phone}
             </p>
           </div>
 
-          {/* Action Buttons */}
-          <div className="card-actions justify-between mt-4">
-            <button className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md transition-all duration-200 flex items-center shadow-md">
-              🤝 Connect
+          <div className="flex justify-between">
+            <button
+              className={`bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md flex items-center transition-all duration-200 shadow-md ${
+                requestStatus.loading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              onClick={() => handleSendRequest("interested", _id)}
+              disabled={requestStatus.loading}
+            >
+              💙 Interested
             </button>
-            <button className="bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 px-4 rounded-md transition-all duration-200 flex items-center shadow-md">
-              ❌ Dismiss
+            <button
+              className={`bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded-md flex items-center transition-all duration-200 shadow-md ${
+                requestStatus.loading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              onClick={() => handleSendRequest("ignored", _id)}
+              disabled={requestStatus.loading}
+            >
+              ❌ Ignore
             </button>
           </div>
         </div>

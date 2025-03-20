@@ -4,14 +4,16 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 import BeforeLoginLayout from "./beforelogin/BeforeLoginLayount.jsx";
-import LandingPage from "./beforelogin/LandingPage.jsx";
-import Signup from "./Login&signup/signup.jsx";
+import LandingPage from "./beforelogin/Landingpage.jsx";
+import Signup from "./Login&signup/Signup.jsx";
 import Login from "./Login&signup/Login.jsx";
 import EditProfile from "./afterLogin/EditProfile.jsx"
 import appStore from "./utils/appStore.js";
 import { addUser } from "./utils/userSlice.js";
 import Feed from "./afterLogin/Feed.jsx";
 import Profile from "./afterLogin/Profileview.jsx";
+import Connections from "./connections/Connections.jsx";
+import Requests from "./connections/Requests.jsx";
 
 // Protected route component that checks for token
 const ProtectedRoute = () => {
@@ -22,7 +24,7 @@ const ProtectedRoute = () => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const res = await axios.get("http://localhost:1999/profile/view", {
+        const res = await axios.get("https://connectify-backend-app.onrender.com/profile/view", {
           withCredentials: true,
         });
         
@@ -80,7 +82,7 @@ const AppWithRedux = () => {
           <Route path="/" element={<LandingPage />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/profile" element={<Profile/>} />
+          {/* <Route path="/profile" element={<Profile/>} /> */}
         </Route>
       </Route>
       
@@ -88,6 +90,9 @@ const AppWithRedux = () => {
       <Route element={<ProtectedRoute />}>
         <Route path="/profile/edit" element={<EditProfile />} />
         <Route path="/feed" element={<Feed />} />
+        <Route path="/connections" element={<Connections />} />
+        <Route path="/requests" element={<Requests />} />
+        <Route path="/profile" element={<Profile />} />
       </Route>
     </Routes>
   );

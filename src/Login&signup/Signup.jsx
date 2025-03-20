@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Eye, EyeOff, UserPlus, Lock, Mail, Phone, Image } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Eye, EyeOff, UserPlus, Lock, Mail, Phone, Image, Calendar, Users, CheckCircle } from "lucide-react";
 import { FaGoogle, FaGithub } from "react-icons/fa";
 import axios from "axios";
-import { motion } from "framer-motion";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -13,39 +13,22 @@ const Signup = () => {
     Password: "",
     Phone: "",
     photoUrl: "",
+    Gender: "",
+    Age: ""
   });
 
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false); // Success state for popup
 
   const validateForm = () => {
-    const { Name, Email, Password, Phone, photoUrl } = formData;
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const phoneRegex = /^[0-9]{10}$/;
-    const urlRegex = /(https?:\/\/.*\.(?:png|jpg|jpeg|gif|svg))/i;
-
-    if (!Name || !Email || !Password || !Phone || !photoUrl) {
+    const { Name, Email, Password, Phone, photoUrl, Gender, Age } = formData;
+    if (!Name || !Email || !Password || !Phone || !photoUrl || !Gender || !Age) {
       setError("All fields are required.");
       return false;
     }
-    if (!emailRegex.test(Email)) {
-      setError("Invalid email format.");
-      return false;
-    }
-    if (Password.length < 8) {
-      setError("Password must be at least 8 characters long.");
-      return false;
-    }
-    if (!phoneRegex.test(Phone)) {
-      setError("Phone number must be 10 digits.");
-      return false;
-    }
-    if (!urlRegex.test(photoUrl)) {
-      setError("Enter a valid image URL.");
-      return false;
-    }
-    setError(""); // Reset error if everything is valid
+    setError("");
     return true;
   };
 
@@ -56,33 +39,29 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
-  
+
     setIsLoading(true);
     try {
-      const response = await axios.post("http://localhost:1999/signin", formData, {
+      const response = await axios.post("https://connectify-backend-app.onrender.com/signin", formData, {
         headers: { "Content-Type": "application/json" },
       });
-  
-      console.log("Response:", response.data);
-  
+
       if (response.data.message === "Signin Successfull") {
-        navigate('/dashboard', { 
-          state: { 
-            user: response.data.data, 
-            message: "Welcome aboard!" 
-          } 
-        });
+        setIsSuccess(true); // Show success popup
+        setTimeout(() => {
+          setIsSuccess(false);
+          navigate("/feed", { state: { user: response.data.data } });
+        }, 3000);
       } else {
         setError(response.data.message || "Signup failed.");
       }
     } catch (err) {
-      console.error("Signup Error:", err.response?.data || err.message);
       setError(err.response?.data?.message || "Something went wrong. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
-  
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 p-4">
       <motion.div 
@@ -91,151 +70,63 @@ const Signup = () => {
         transition={{ duration: 0.5 }}
         className="w-full max-w-md bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 overflow-hidden"
       >
-        <div className="p-4 space-y-4"> {/* Reduced padding */}
-          <div className="text-center">
-            <h2 className="text-2xl font-bold text-white mb-1 flex items-center justify-center gap-2">
-              <UserPlus className="text-blue-400" size={24} />
-              Sign Up
-            </h2>
-            <p className="text-xs text-gray-300 mb-2">
-              Create your account and start your journey
-            </p>
-          </div>
+        <div className="p-6 space-y-4">
+          <h2 className="text-2xl font-bold text-white text-center flex items-center justify-center gap-2">
+            <UserPlus className="text-blue-400" size={24} />
+            Sign Up
+          </h2>
 
-          <form onSubmit={handleSubmit} className="space-y-3"> {/* Reduced spacing */}
-            <div className="space-y-3">
-              {/* Name Input */}
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
-                  <UserPlus size={16} className="text-gray-400" />
-                </div>
-                <input 
-                  type="text" 
-                  name="Name" 
-                  value={formData.Name} 
-                  onChange={handleChange} 
-                  className="w-full p-2 pl-8 text-sm bg-white/20 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 border border-white/30"
-                  placeholder="Full Name" 
-                  required 
-                />
-              </div>
-
-              {/* Email Input */}
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
-                  <Mail size={16} className="text-gray-400" />
-                </div>
-                <input 
-                  type="email" 
-                  name="Email" 
-                  value={formData.Email} 
-                  onChange={handleChange} 
-                  className="w-full p-2 pl-8 text-sm bg-white/20 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 border border-white/30"
-                  placeholder="Email Address" 
-                  required 
-                />
-              </div>
-
-              {/* Password Input */}
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
-                  <Lock size={16} className="text-gray-400" />
-                </div>
-                <input 
-                  type={passwordVisible ? "text" : "password"} 
-                  name="Password" 
-                  value={formData.Password} 
-                  onChange={handleChange} 
-                  className="w-full p-2 pl-8 text-sm bg-white/20 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 border border-white/30"
-                  placeholder="Password" 
-                  required 
-                />
-                <button 
-                  type="button" 
-                  className="absolute inset-y-0 right-0 pr-2 flex items-center text-gray-400"
-                  onClick={() => setPasswordVisible(!passwordVisible)}
-                >
-                  {passwordVisible ? <EyeOff size={16} /> : <Eye size={16} />}
-                </button>
-              </div>
-
-              {/* Phone Input */}
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
-                  <Phone size={16} className="text-gray-400" />
-                </div>
-                <input 
-                  type="tel" 
-                  name="Phone" 
-                  value={formData.Phone} 
-                  onChange={handleChange} 
-                  className="w-full p-2 pl-8 text-sm bg-white/20 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 border border-white/30"
-                  placeholder="Phone Number" 
-                  required 
-                />
-              </div>
-
-              {/* Photo URL Input */}
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
-                  <Image size={16} className="text-gray-400" />
-                </div>
-                <input 
-                  type="text" 
-                  name="photoUrl" 
-                  value={formData.photoUrl} 
-                  onChange={handleChange} 
-                  className="w-full p-2 pl-8 text-sm bg-white/20 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 border border-white/30"
-                  placeholder="Profile Photo URL" 
-                  required 
-                />
-              </div>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <input type="text" name="Name" value={formData.Name} onChange={handleChange} className="w-full p-2 bg-white/20 text-white rounded-lg placeholder-gray-300" placeholder="Full Name" required />
+            <input type="email" name="Email" value={formData.Email} onChange={handleChange} className="w-full p-2 bg-white/20 text-white rounded-lg placeholder-gray-300" placeholder="Email Address" required />
+            
+            <div className="relative">
+              <input type={passwordVisible ? "text" : "password"} name="Password" value={formData.Password} onChange={handleChange} className="w-full p-2 bg-white/20 text-white rounded-lg placeholder-gray-300" placeholder="Password" required />
+              <button type="button" className="absolute inset-y-0 right-2 text-gray-400" onClick={() => setPasswordVisible(!passwordVisible)}>
+                {passwordVisible ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
             </div>
 
-            {/* Error Message */}
-            {error && (
-              <motion.div 
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-red-600/20 border border-red-500 text-red-300 p-2 rounded-lg text-center text-sm"
-              >
-                {error}
-              </motion.div>
-            )}
+            <input type="tel" name="Phone" value={formData.Phone} onChange={handleChange} className="w-full p-2 bg-white/20 text-white rounded-lg placeholder-gray-300" placeholder="Phone Number" required />
 
-            {/* Submit Button */}
-            <button 
-              type="submit" 
-              disabled={isLoading}
-              className="w-full p-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 flex items-center justify-center space-x-2"
-            >
-              {isLoading ? (
-                <div className="animate-spin h-4 w-4 border-t-2 border-white rounded-full"></div>
-              ) : (
-                "Create Account"
-              )}
+            <select name="Gender" value={formData.Gender} onChange={handleChange} className="w-full p-2 bg-white/20 text-white rounded-lg placeholder-gray-300" required>
+              <option value="" disabled>Select Gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+
+            <input type="number" name="Age" value={formData.Age} onChange={handleChange} className="w-full p-2 bg-white/20 text-white rounded-lg placeholder-gray-300" placeholder="Age" min="18" max="120" required />
+
+            <input type="text" name="photoUrl" value={formData.photoUrl} onChange={handleChange} className="w-full p-2 bg-white/20 text-white rounded-lg placeholder-gray-300" placeholder="Profile Photo URL" required />
+
+            {error && <div className="bg-red-600/20 border border-red-500 text-red-300 p-2 rounded-lg text-center">{error}</div>}
+
+            <button type="submit" disabled={isLoading} className="w-full p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center justify-center">
+              {isLoading ? <div className="animate-spin h-4 w-4 border-t-2 border-white rounded-full"></div> : "Create Account"}
             </button>
           </form>
 
-          {/* Alternative Sign Up Options */}
-          <div className="text-center space-y-2">
-            <div className="flex items-center justify-center space-x-4">
-              <button className="bg-white/10 p-2 rounded-full hover:bg-white/20 transition-colors">
-                <FaGoogle className="text-red-500" size={20} />
-              </button>
-              <button className="bg-white/10 p-2 rounded-full hover:bg-white/20 transition-colors">
-                <FaGithub className="text-white" size={20} />
-              </button>
-            </div>
-            <p className="text-xs text-gray-400">
-              Already have an account?{" "}
-              <Link to="/login" className="text-blue-400 hover:underline">
-                Log In
-              </Link>
-            </p>
-          </div>
+          <p className="text-xs text-gray-400 text-center">
+            Already have an account? <Link to="/login" className="text-blue-400 hover:underline">Log In</Link>
+          </p>
         </div>
       </motion.div>
+
+      {/* Success Popup */}
+      <AnimatePresence>
+        {isSuccess && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            className="fixed top-20 left-1/2 transform -translate-x-1/2 bg-green-500 text-white p-4 rounded-lg shadow-lg flex items-center gap-2"
+          >
+            <CheckCircle size={24} />
+            Signup Successful! Redirecting...
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

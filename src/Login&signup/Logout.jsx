@@ -14,7 +14,7 @@ const Logout = ({ closeDropdown }) => {
   const handleLogout = async () => {
     try {
       // Call your logout API
-      await axios.post("http://localhost:1999/logout", {}, {
+      await axios.post("https://connectify-backend-app.onrender.com/logout", {}, {
         withCredentials: true
       });
       

@@ -1,4 +1,4 @@
-import { Code, Menu, ChevronDown, Edit, Settings, LogOut, User } from "lucide-react";
+import { Code, Menu, ChevronDown, Edit, Settings, LogOut, User, Handshake, MessageSquare } from "lucide-react";
 import React, { useState, useRef, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -12,7 +12,7 @@ const Header = () => {
   const dropdownRef = useRef(null);
 
   // Log user state for debugging
-  console.log("User state in header:", user);
+  // console.log("User state in header:", user);
 
   // Check if user is logged in - robust check
   const isLoggedIn = Boolean(user && typeof user === 'object' && Object.keys(user).length > 0);
@@ -107,7 +107,7 @@ const Header = () => {
                       alt="User profile"
                       className="w-full h-full object-cover"
                       onError={(e) => {
-                        console.log("Image failed to load:", photoUrl);
+                        // console.log("Image failed to load:", photoUrl);
                         e.target.style.display = 'none';
                       }}
                     />
@@ -148,7 +148,7 @@ const Header = () => {
                           alt="User profile"
                           className="w-full h-full object-cover"
                           onError={(e) => {
-                            console.log("Image failed to load in dropdown");
+                            // console.log("Image failed to load in dropdown");
                             e.target.style.display = 'none';
                           }}
                         />
@@ -185,13 +185,22 @@ const Header = () => {
                       Edit Profile
                     </Link>
                     <Link
-                      to="/settings"
+                      to="/connections"
                       className="flex items-center px-4 py-3 text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition-colors"
                       onClick={() => setDropdownOpen(false)}
                     >
-                      <Settings size={16} className="mr-3 text-yellow-400" />
-                      Settings
+                      <Handshake size={16} className="mr-3 text-yellow-400" /> 
+                      Connections
                     </Link>
+                    <Link
+                      to="/requests"
+                      className="flex items-center px-4 py-3 text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition-colors"
+                      onClick={() => setDropdownOpen(false)}
+                    >
+                      <MessageSquare size={16} className="mr-3 text-purple-400" />
+                      Requests
+                    </Link>
+                    
                     <div className="px-4 py-2">
                       <div className="border-t border-gray-700 my-1"></div>
                     </div>
