@@ -13,7 +13,7 @@ const Feed = () => {
 
   useEffect(() => {
     const getFeed = async () => {
-      if (feed) return;
+      if (!feed) return <h1>loading...</h1>;
 
       try {
         setLoading(true);

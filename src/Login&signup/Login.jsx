@@ -31,18 +31,23 @@ const Login = () => {
     setError(""); 
   
     try {
-      const response = await axios.post("https://connectify-backend-app.onrender.com/login", formData, {
-        headers: { "Content-Type": "application/json" },
-        withCredentials: true
-      });
-   
-      // console.log("Response:", response.data);
-      
-      
+      const response = await axios.post(
+        "https://connectify-backend-app.onrender.com/login",
+        formData,
+        {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true, // ✅ Required for secure cookies
+        }
+      );
+  
+      console.log("Response:", response.data);
+  
       if (response.data.message.toLowerCase().includes("login successful")) {
+        // ✅ Store only user data in localStorage (not entire response)
         localStorage.setItem("userData", JSON.stringify(response.data.data));
-        dispatch(addUser(response.data));
-        // console.log("Navigating to dashboard...");
+        
+        // ✅ Dispatch only user data to Redux store
+        dispatch(addUser(response.data.data));
   
         navigate("/feed", {
           state: {
@@ -60,6 +65,7 @@ const Login = () => {
       setIsLoading(false);
     }
   };
+  
   
   
   return (
