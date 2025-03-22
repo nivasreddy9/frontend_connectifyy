@@ -35,13 +35,13 @@ const Login = () => {
         headers: { "Content-Type": "application/json" },
         withCredentials: true
       });
-  
+   
       // console.log("Response:", response.data);
-      dispatch(addUser(response.data));
-
-  
+      
+      
       if (response.data.message.toLowerCase().includes("login successful")) {
         localStorage.setItem("userData", JSON.stringify(response.data.data));
+        dispatch(addUser(response.data));
         // console.log("Navigating to dashboard...");
   
         navigate("/feed", {
