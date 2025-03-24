@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Logout from "../Login&signup/Logout";
 import { motion, AnimatePresence } from "framer-motion";
+// commented
 
 const Header = () => {
   const user = useSelector((state) => state.user);
