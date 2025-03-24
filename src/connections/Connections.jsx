@@ -3,6 +3,7 @@ import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { addConnections } from "../utils/connectionSlice";
 import Base_url from "../utils/baseurl";
+import Header from "../beforelogin/Header";
 
 const Connections = () => {
     // Local state as backup if Redux isn't working
@@ -50,44 +51,47 @@ const Connections = () => {
     }
 
     return (
-        <div className="text-center my-8">
-            <h1 className="text-3xl font-bold mb-6">Connections</h1>
-            <div className="flex flex-wrap justify-center">
-                {displayConnections.map((connection) => {
-                    // Check if connection has either touserid or fromuserid
-                    // This handles both cases: when you sent the request or when you received it
-                    const connectionUser =  connection.fromuserid;
-                    
-                    if (!connectionUser) {
-                        console.error("Connection missing user data:", connection);
-                        return null;
-                    }
+        <>
+            <Header />
+            <div className="text-center my-8">
+                <h1 className="text-3xl font-bold mb-6">Connections</h1>
+                <div className="flex flex-wrap justify-center">
+                    {displayConnections.map((connection) => {
+                        // Check if connection has either touserid or fromuserid
+                        // This handles both cases: when you sent the request or when you received it
+                        const connectionUser =  connection.fromuserid;
+                        
+                        if (!connectionUser) {
+                            console.error("Connection missing user data:", connection);
+                            return null;
+                        }
 
-                    const { Name, Email, photoUrl, Age, Gender, About } = connectionUser;
+                        const { Name, Email, photoUrl, Age, Gender, About } = connectionUser;
 
-                    return (
-                        <div key={connection._id} className="m-4 p-6 bg-base-200 rounded-lg w-64">
-                            <div className="flex justify-center mb-4">
-                                <img
-                                    src={photoUrl}
-                                    alt={Name}
-                                    className="w-24 h-24 rounded-full object-cover"
-                                    onError={(e) => {
-                                        e.target.onerror = null;
-                                        e.target.src = "https://via.placeholder.com/100";
-                                    }}
-                                />
+                        return (
+                            <div key={connection._id} className="m-4 p-6 bg-base-200 rounded-lg w-64">
+                                <div className="flex justify-center mb-4">
+                                    <img
+                                        src={photoUrl}
+                                        alt={Name}
+                                        className="w-24 h-24 rounded-full object-cover"
+                                        onError={(e) => {
+                                            e.target.onerror = null;
+                                            e.target.src = "https://via.placeholder.com/100";
+                                        }}
+                                    />
+                                </div>
+                                <h2 className="text-xl font-bold mb-2">{Name}</h2>
+                                <p className="text-gray-600">{Email}</p>
+                                {Age && <p className="text-gray-600">Age: {Age}</p>}
+                                {Gender && <p className="text-gray-600">Gender: {Gender}</p>}
+                                {About && <p className="text-gray-600">About: {About}</p>}
                             </div>
-                            <h2 className="text-xl font-bold mb-2">{Name}</h2>
-                            <p className="text-gray-600">{Email}</p>
-                            {Age && <p className="text-gray-600">Age: {Age}</p>}
-                            {Gender && <p className="text-gray-600">Gender: {Gender}</p>}
-                            {About && <p className="text-gray-600">About: {About}</p>}
-                        </div>
-                    );
-                })}
+                        );
+                    })}
+                </div>
             </div>
-        </div>
+        </>
     );
 };
 

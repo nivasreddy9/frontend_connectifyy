@@ -4,6 +4,7 @@ import { addRequests, removeRequest } from '../utils/requestSlice';
 import axios from 'axios';
 import { User } from 'lucide-react';
 import Base_url from '../utils/baseurl';
+import Header from '../beforelogin/Header';
 
 const Requests = () => {
     const dispatch = useDispatch();
@@ -52,6 +53,7 @@ const Requests = () => {
 
     return (
         <div className="min-h-screen bg-gray-100 pt-24 pb-10 px-4 sm:px-6 lg:px-8">
+            <Header />
             <div className="max-w-3xl mx-auto">
                 <div className="bg-white rounded-xl shadow-md overflow-hidden p-6">
                     <h1 className="text-2xl font-bold text-gray-800 mb-6">Connection Requests</h1>

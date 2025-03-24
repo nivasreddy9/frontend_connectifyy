@@ -11,7 +11,7 @@ const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  const isLoggedIn = Boolean(user && typeof user === 'object' && Object.keys(user).length > 0);
+  const isLoggedIn = Boolean(user && typeof user === "object" && Object.keys(user).length > 0);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -25,9 +25,9 @@ const Header = () => {
     };
   }, []);
 
-  const getUserName = () => user?.name || user?.username || "User";
+  const getUserName = () => user?.Name || user?.username || "User";
   const getPhotoUrl = () => user?.photoUrl || user?.avatar || null;
-  
+
   return (
     <header className="bg-gray-900 text-white fixed top-0 left-0 w-full z-50 shadow-lg py-3">
       <div className="container mx-auto px-4 flex justify-between items-center">
@@ -36,6 +36,7 @@ const Header = () => {
           <span className="text-xl font-bold text-blue-400">Connectify</span>
         </Link>
 
+        {/* Desktop Menu */}
         <div className="hidden md:flex items-center space-x-6">
           {isLoggedIn ? (
             <div className="relative" ref={dropdownRef}>
@@ -82,10 +83,42 @@ const Header = () => {
           )}
         </div>
 
+        {/* Mobile Menu Button */}
         <button className="md:hidden p-2 rounded-lg hover:bg-gray-700" onClick={() => setMobileMenuOpen(true)}>
           <Menu size={24} />
         </button>
       </div>
+
+      {/* Mobile Menu */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 bg-gray-900 bg-opacity-90 z-50 flex flex-col items-center justify-center space-y-6 text-white"
+          >
+            <button className="absolute top-5 right-5 text-gray-400" onClick={() => setMobileMenuOpen(false)}>
+              <X size={30} />
+            </button>
+            {isLoggedIn ? (
+              <>
+                <Link to="/profile" className="text-xl" onClick={() => setMobileMenuOpen(false)}>Profile</Link>
+                <Link to="/profile/edit" className="text-xl" onClick={() => setMobileMenuOpen(false)}>Edit Profile</Link>
+                <Link to="/requests" className="text-xl" onClick={() => setMobileMenuOpen(false)}>Requests</Link>
+                <Link to="/connections" className="text-xl" onClick={() => setMobileMenuOpen(false)}>Connections</Link>
+                <Logout closeDropdown={() => setMobileMenuOpen(false)} />
+              </>
+            ) : (
+              <>
+                <Link to="/login" className="text-xl" onClick={() => setMobileMenuOpen(false)}>Log In</Link>
+                <Link to="/signup" className="text-xl" onClick={() => setMobileMenuOpen(false)}>Sign Up</Link>
+              </>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 };
