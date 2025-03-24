@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addRequests, removeRequest } from '../utils/requestSlice';
 import axios from 'axios';
 import { User } from 'lucide-react';
+import Base_url from '../utils/baseurl';
 
 const Requests = () => {
     const dispatch = useDispatch();
@@ -13,7 +14,7 @@ const Requests = () => {
     const reviewRequest = async (status, requestId) => {
         try {
             const res = await axios.post(
-                `https://connectify-backend-app.onrender.com/request/review/${status}/${requestId}`,
+                Base_url+`/request/review/${status}/${requestId}`,
                 {},
                 { withCredentials: true }
             );
@@ -26,7 +27,7 @@ const Requests = () => {
     const fetchRequest = async () => {
         setLoading(true);
         try {
-            const res = await axios.get("https://connectify-backend-app.onrender.com/user/requests/received", {
+            const res = await axios.get(Base_url+"/user/requests/received", {
                 withCredentials: true,
             });
 

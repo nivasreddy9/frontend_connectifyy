@@ -6,20 +6,15 @@ import axios from "axios";
 import { motion } from "framer-motion";
 import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
+import Base_url from "../utils/baseurl";
 
 const Login = () => {
   const navigate = useNavigate();
-  const dispatch=useDispatch();
-  const [formData, setFormData] = useState({
-    Email: "tillu685@gmail.com",
-    Password: "Nana21032002@"
-  });
-
+  const dispatch = useDispatch();
+  const [formData, setFormData] = useState({ Email: "nivasreddy685@gmail.com", Password: "NAna21032002@" });
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
-
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -28,46 +23,38 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    setError(""); 
-  
+    setError("");
+
     try {
       const response = await axios.post(
-        "https://connectify-backend-app.onrender.com/login",
+        `${Base_url}/login`,
         formData,
         {
           headers: { "Content-Type": "application/json" },
-          withCredentials: true, // ✅ Required for secure cookies
+          withCredentials: true, // ✅ Ensures cookies are sent
         }
       );
-  
+
       console.log("Response:", response.data);
-  
-      if (response.data.message.toLowerCase().includes("login successful")) {
-        // ✅ Store only user data in localStorage (not entire response)
+
+      if (response.data?.message?.toLowerCase().includes("login successful")) {
         localStorage.setItem("userData", JSON.stringify(response.data.data));
-        
-        // ✅ Dispatch only user data to Redux store
         dispatch(addUser(response.data.data));
-  
+
         navigate("/feed", {
-          state: {
-            user: response.data.data,
-            message: "Welcome back!",
-          },
+          state: { user: response.data.data, message: "Welcome back!" },
         });
       } else {
-        setError(response.data.message || "Login failed.");
+        setError(response.data?.message || "Login failed.");
       }
     } catch (err) {
-      console.error("Login Error:", err.response?.data || err.message);
-      setError(err.response?.data?.message || "Something went wrong. Please try again.");
+      console.error("Login Error:", err?.response?.data || err.message);
+      setError(err?.response?.data?.message || "Something went wrong.");
     } finally {
       setIsLoading(false);
     }
   };
-  
-  
-  
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 p-4">
       <motion.div 
@@ -78,27 +65,22 @@ const Login = () => {
       >
         <div className="p-4 space-y-4">
           <div className="text-center">
-            <h2 className="text-2xl font-bold text-white mb-1 flex items-center justify-center gap-2">
-              <LogIn className="text-blue-400" size={24} />
-              Login
+            <h2 className="text-2xl font-bold text-white flex items-center justify-center gap-2">
+              <LogIn className="text-blue-400" size={24} /> Login
             </h2>
-            <p className="text-xs text-gray-300 mb-2">
-              Sign in to continue your journey
-            </p>
+            <p className="text-xs text-gray-300">Sign in to continue</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-3">
             {/* Email Input */}
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
-                <Mail size={16} className="text-gray-400" />
-              </div>
+              <Mail className="absolute left-2 top-3 text-gray-400" size={16} />
               <input 
                 type="email" 
                 name="Email" 
                 value={formData.Email} 
                 onChange={handleChange} 
-                className="w-full p-2 pl-8 text-sm bg-white/20 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 border border-white/30"
+                className="w-full p-2 pl-8 text-sm bg-white/20 rounded-lg text-white placeholder-gray-300 focus:ring-2 focus:ring-blue-500 border border-white/30"
                 placeholder="Email Address" 
                 required 
               />
@@ -106,33 +88,28 @@ const Login = () => {
 
             {/* Password Input */}
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
-                <Lock size={16} className="text-gray-400" />
-              </div>
+              <Lock className="absolute left-2 top-3 text-gray-400" size={16} />
               <input 
                 type={passwordVisible ? "text" : "password"} 
                 name="Password" 
                 value={formData.Password} 
                 onChange={handleChange} 
-                className="w-full p-2 pl-8 text-sm bg-white/20 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 border border-white/30"
+                className="w-full p-2 pl-8 text-sm bg-white/20 rounded-lg text-white placeholder-gray-300 focus:ring-2 focus:ring-blue-500 border border-white/30"
                 placeholder="Password" 
                 required 
               />
               <button 
                 type="button" 
-                className="absolute inset-y-0 right-0 pr-2 flex items-center text-gray-400"
+                className="absolute right-2 top-2 text-gray-400"
                 onClick={() => setPasswordVisible(!passwordVisible)}
               >
                 {passwordVisible ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
             </div>
 
-            {/* Forgot Password Link */}
+            {/* Forgot Password */}
             <div className="text-right">
-              <Link 
-                to="/forgot-password" 
-                className="text-xs text-blue-400 hover:underline"
-              >
+              <Link to="/forgot-password" className="text-xs text-blue-400 hover:underline">
                 Forgot Password?
               </Link>
             </div>
@@ -152,17 +129,15 @@ const Login = () => {
             <button 
               type="submit" 
               disabled={isLoading}
-              className="w-full p-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 flex items-center justify-center space-x-2"
+              className="w-full p-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center"
             >
               {isLoading ? (
                 <div className="animate-spin h-4 w-4 border-t-2 border-white rounded-full"></div>
-              ) : (
-                "Login"
-              )}
+              ) : "Login"}
             </button>
           </form>
 
-          {/* Alternative Login Options */}
+          {/* Alternative Login */}
           <div className="text-center space-y-2">
             <div className="flex items-center justify-center space-x-4 mb-2">
               <div className="h-px w-1/4 bg-white/20"></div>
@@ -171,10 +146,10 @@ const Login = () => {
             </div>
 
             <div className="flex items-center justify-center space-x-4">
-              <button className="bg-white/10 p-2 rounded-full hover:bg-white/20 transition-colors">
+              <button className="bg-white/10 p-2 rounded-full hover:bg-white/20">
                 <FaGoogle className="text-red-500" size={20} />
               </button>
-              <button className="bg-white/10 p-2 rounded-full hover:bg-white/20 transition-colors">
+              <button className="bg-white/10 p-2 rounded-full hover:bg-white/20">
                 <FaGithub className="text-white" size={20} />
               </button>
             </div>

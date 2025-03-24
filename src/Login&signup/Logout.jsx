@@ -6,6 +6,7 @@ import axios from "axios";
 // Import the action to remove user data
 // Change this import to match your actual action
 import { removeUser } from "../utils/userSlice"; 
+import Base_url from "../utils/baseurl";
 
 const Logout = ({ closeDropdown }) => {
   const dispatch = useDispatch();
@@ -14,7 +15,7 @@ const Logout = ({ closeDropdown }) => {
   const handleLogout = async () => {
     try {
       // Call your logout API
-      await axios.post("https://connectify-backend-app.onrender.com/logout", {}, {
+      await axios.post(+Base_url+"/logout", {}, {
         withCredentials: true
       });
       

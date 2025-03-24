@@ -1,10 +1,9 @@
-import { Code, Menu, ChevronDown, X, User, Handshake, LogOut } from "lucide-react";
+import { Code, Menu, ChevronDown, X, User, Handshake, LogOut, Edit, Users } from "lucide-react";
 import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Logout from "../Login&signup/Logout";
 import { motion, AnimatePresence } from "framer-motion";
-// commented
 
 const Header = () => {
   const user = useSelector((state) => state.user);
@@ -32,7 +31,7 @@ const Header = () => {
   return (
     <header className="bg-gray-900 text-white fixed top-0 left-0 w-full z-50 shadow-lg py-3">
       <div className="container mx-auto px-4 flex justify-between items-center">
-        <Link to={isLoggedIn ? "/dashboard" : "/"} className="flex items-center space-x-2 group">
+        <Link to={isLoggedIn ? "/feed" : "/"} className="flex items-center space-x-2 group">
           <Code size={28} className="text-blue-400 group-hover:text-blue-300 transition-colors" />
           <span className="text-xl font-bold text-blue-400">Connectify</span>
         </Link>
@@ -58,6 +57,14 @@ const Header = () => {
                       <User size={16} />
                       <span>Profile</span>
                     </Link>
+                    <Link to="/profile/edit" className="flex items-center space-x-2 px-4 py-2 hover:bg-gray-700" onClick={() => setDropdownOpen(false)}>
+                      <Edit size={16} />
+                      <span>Edit Profile</span>
+                    </Link>
+                    <Link to="/requests" className="flex items-center space-x-2 px-4 py-2 hover:bg-gray-700" onClick={() => setDropdownOpen(false)}>
+                      <Users size={16} />
+                      <span>Requests</span>
+                    </Link>
                     <Link to="/connections" className="flex items-center space-x-2 px-4 py-2 hover:bg-gray-700" onClick={() => setDropdownOpen(false)}>
                       <Handshake size={16} />
                       <span>Connections</span>
@@ -79,28 +86,6 @@ const Header = () => {
           <Menu size={24} />
         </button>
       </div>
-
-      <AnimatePresence>
-        {mobileMenuOpen && (
-          <motion.div initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }} transition={{ duration: 0.3 }} className="fixed inset-0 bg-gray-900 bg-opacity-90 z-50 flex flex-col items-center justify-center space-y-6 text-white">
-            <button className="absolute top-5 right-5 text-gray-400" onClick={() => setMobileMenuOpen(false)}>
-              <X size={30} />
-            </button>
-            {isLoggedIn ? (
-              <>
-                <Link to="/profile" className="text-xl" onClick={() => setMobileMenuOpen(false)}>Profile</Link>
-                <Link to="/connections" className="text-xl" onClick={() => setMobileMenuOpen(false)}>Connections</Link>
-                <Logout closeDropdown={() => setMobileMenuOpen(false)} />
-              </>
-            ) : (
-              <>
-                <Link to="/login" className="text-xl" onClick={() => setMobileMenuOpen(false)}>Log In</Link>
-                <Link to="/signup" className="text-xl" onClick={() => setMobileMenuOpen(false)}>Sign Up</Link>
-              </>
-            )}
-          </motion.div>
-        )}
-      </AnimatePresence>
     </header>
   );
 };

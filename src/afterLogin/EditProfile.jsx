@@ -3,6 +3,7 @@ import { useState } from "react";
 import { addUser } from "../utils/userSlice";
 import axios from "axios";
 import { motion } from "framer-motion";
+import Base_url from "../utils/baseurl";
 
 const EditProfile = () => {
     const user = useSelector((state) => state.user);
@@ -35,7 +36,7 @@ const EditProfile = () => {
             });
 
             const res = await axios.post(
-                "https://connectify-backend-app.onrender.com/profile/edit",
+                Base_url+"/profile/edit",
                 {
                     id: user._id,
                     Name: name,

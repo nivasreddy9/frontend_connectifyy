@@ -14,6 +14,7 @@ import Feed from "./afterLogin/Feed.jsx";
 import Profile from "./afterLogin/Profileview.jsx";
 import Connections from "./connections/Connections.jsx";
 import Requests from "./connections/Requests.jsx";
+import Base_url from "./utils/baseurl.js";
 
 // Protected route component that checks for token
 const ProtectedRoute = () => {
@@ -24,7 +25,7 @@ const ProtectedRoute = () => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const res = await axios.get("https://connectify-backend-app.onrender.com/profile/view", {
+        const res = await axios.get(Base_url+"/profile/view", {
           withCredentials: true,
         });
         

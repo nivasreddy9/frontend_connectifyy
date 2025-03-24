@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { removeUserFromFeed } from "../utils/feedSlice";
 import axios from "axios";
+import Base_url from "../utils/baseurl";
 
 const UserCard = ({ user }) => {
   const { _id, Name, Email, Phone, photoUrl, Age, Gender, About } = user;
@@ -16,7 +17,7 @@ const UserCard = ({ user }) => {
     setRequestStatus({ loading: true, error: null });
 
     try {
-      const requestUrl = `https://connectify-backend-app.onrender.com/request/send/${status}/${userId}`;
+      const requestUrl = Base_url+`/request/send/${status}/${userId}`;
       console.log("Sending request to:", requestUrl);
 
       const res = await axios.post(requestUrl, {}, { withCredentials: true });

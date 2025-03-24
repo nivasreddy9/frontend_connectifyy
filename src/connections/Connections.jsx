@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { addConnections } from "../utils/connectionSlice";
+import Base_url from "../utils/baseurl";
 
 const Connections = () => {
     // Local state as backup if Redux isn't working
@@ -13,7 +14,7 @@ const Connections = () => {
     const fetchConnection = async () => {
         setLoading(true);
         try {
-            const res = await axios.get("https://connectify-backend-app.onrender.com/user/connections", {
+            const res = await axios.get(Base_url+"/user/connections", {
                 withCredentials: true,
             });
             console.log("API Response:", res.data.data);

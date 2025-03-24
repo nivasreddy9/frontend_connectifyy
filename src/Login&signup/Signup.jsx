@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Eye, EyeOff, UserPlus, Lock, Mail, Phone, Image, Calendar, Users, CheckCircle } from "lucide-react";
 import { FaGoogle, FaGithub } from "react-icons/fa";
 import axios from "axios";
+import Base_url from "../utils/baseurl";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -42,7 +43,7 @@ const Signup = () => {
 
     setIsLoading(true);
     try {
-      const response = await axios.post("https://connectify-backend-app.onrender.com/signin", formData, {
+      const response = await axios.post(+Base_url+"/signin", formData, {
         headers: { "Content-Type": "application/json" },
       });
 

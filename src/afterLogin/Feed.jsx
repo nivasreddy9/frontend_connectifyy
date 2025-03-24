@@ -1,66 +1,77 @@
-{isLoggedIn ? (
-  <div className="flex items-center space-x-4 relative" ref={dropdownRef}>
-    <div 
-      className="flex items-center space-x-3 cursor-pointer bg-gray-700/40 hover:bg-gray-700/60 px-3 py-2 rounded-full" 
-      onClick={() => setDropdownOpen(!dropdownOpen)}
-    >
-      {photoUrl ? (
-        <img 
-          src={photoUrl} 
-          alt="User profile" 
-          className="w-8 h-8 rounded-full border-2 border-blue-400 shadow-sm" 
-          onError={(e) => e.target.style.display = 'none'} 
-        />
-      ) : (
-        <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-semibold">
-          {userName[0].toUpperCase()}
-        </div>
-      )}
-      <span className="text-sm font-medium text-gray-100">{userName}</span>
-      <ChevronDown size={16} className={`text-gray-400 transition-transform ${dropdownOpen ? "rotate-180" : ""}`} />
-    </div>
+import React, { useEffect, useState } from "react";
+import Header from "../beforelogin/Header";
+import { useDispatch, useSelector } from "react-redux";
+import { addFeed } from "../utils/feedSlice";
+import axios from "axios";
+import UserCard from "./UserCard";
+import Base_url from "../utils/baseurl";
 
-    {/* Dropdown Menu */}
-    {dropdownOpen && (
-      <motion.div 
-        initial={{ opacity: 0, y: -10 }} 
-        animate={{ opacity: 1, y: 0 }} 
-        exit={{ opacity: 0, y: -10 }} 
-        transition={{ duration: 0.2 }} 
-        className="absolute right-0 mt-2 w-48 bg-gray-800 shadow-lg rounded-lg overflow-hidden"
-      >
-        <Link 
-          to="/profile" 
-          className="flex items-center px-4 py-3 hover:bg-gray-700"
-          onClick={() => setDropdownOpen(false)}
-        >
-          <User size={18} className="mr-2 text-blue-400" />
-          Profile
-        </Link>
-        <Link 
-          to="/connections" 
-          className="flex items-center px-4 py-3 hover:bg-gray-700"
-          onClick={() => setDropdownOpen(false)}
-        >
-          <Handshake size={18} className="mr-2 text-green-400" />
-          Connections
-        </Link>
-        <Link 
-          to="/messages" 
-          className="flex items-center px-4 py-3 hover:bg-gray-700"
-          onClick={() => setDropdownOpen(false)}
-        >
-          <MessageSquare size={18} className="mr-2 text-yellow-400" />
-          Messages
-        </Link>
-        <div className="border-t border-gray-600"></div>
-        <Logout closeDropdown={() => setDropdownOpen(false)} />
-      </motion.div>
-    )}
-  </div>
-) : (
-  <div className="flex items-center space-x-3">
-    <Link to="/login" className="border-2 border-blue-400 text-blue-400 px-5 py-2 rounded-lg hover:bg-blue-400 hover:text-gray-900 font-medium">Log In</Link>
-    <Link to="/signup" className="bg-blue-500 px-5 py-2 rounded-lg hover:bg-blue-600 font-medium shadow-md">Sign Up</Link>
-  </div>
-)}
+const Feed = () => {
+  const feed = useSelector((store) => store.feed);
+  const dispatch = useDispatch();
+  const [loading, setLoading] = useState(!feed);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const getFeed = async () => {
+
+      try {
+        setLoading(true);
+        const res = await axios.get(Base_url+"/feed", { withCredentials: true });
+        dispatch(addFeed(res.data));
+      } catch (err) {
+        console.error("Error fetching feed:", err);
+        setError("Failed to load profiles");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    getFeed();
+  }, []);
+
+  if (loading) {
+    return (
+      <div>
+        <Header />
+        <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-blue-100 via-pink-100 to-purple-100">
+          <div className="bg-white p-8 rounded-lg shadow-lg">
+            <p className="text-xl text-gray-700">Loading profiles...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div>
+        <Header />
+        <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-blue-100 via-pink-100 to-purple-100">
+          <div className="bg-white p-8 rounded-lg shadow-lg">
+            <p className="text-xl text-red-500">{error}</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <Header />
+      <div className="feed">
+        {feed && feed.length > 0 ? (
+          <UserCard user={feed[0]} />
+        ) : (
+          <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-blue-100 via-pink-100 to-purple-100">
+            <div className="bg-white p-8 rounded-lg shadow-lg">
+              <p className="text-xl text-gray-700">No more profiles to show</p>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default Feed;

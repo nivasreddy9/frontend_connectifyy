@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
 import Header from "../beforelogin/Header";
+import Base_url from "../utils/baseurl";
 
 const UserProfile = () => {
     const [user, setUser] = useState(null);
@@ -9,7 +10,7 @@ const UserProfile = () => {
 
     const fetchUserProfile = async () => {
         try {
-            const res = await axios.get("https://connectify-backend-app.onrender.com/profile/view", { withCredentials: true });
+            const res = await axios.get(Base_url+"/profile/view", { withCredentials: true });
             setUser(res.data);
         } catch (error) {
             console.error("Error fetching user profile:", error);
