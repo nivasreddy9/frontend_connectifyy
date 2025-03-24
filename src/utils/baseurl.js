@@ -1,3 +1,3 @@
-const Base_url="http://localhost:1999"
+const Base_url="https://connectify-backend-app.onrender.com"
 
 export default Base_url;
