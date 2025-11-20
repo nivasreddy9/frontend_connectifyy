@@ -11,7 +11,7 @@ import Base_url from "../utils/baseurl";
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [formData, setFormData] = useState({ Email: "narendramodi685@gmail.com", Password: "Modi685@" });
+  const [formData, setFormData] = useState({ Email: "nivasreddy2102@gmail.com", Password: "Nivas21@" });
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
